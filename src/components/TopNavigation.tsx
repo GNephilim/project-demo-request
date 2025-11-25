@@ -244,9 +244,9 @@ export const TopNavigation: React.FC<TopNavigationProps> = ({
                 <HomeIcon sx={{ fontSize: '1.2rem', color: '#26c6da' }} />
                 <Typography>Dashboard</Typography>
               </MenuItem>
-              <MenuItem onClick={() => handleNavigation('overview')} sx={{ gap: '12px' }}>
-                <BarChartIcon sx={{ fontSize: '1.2rem', color: '#26c6da' }} />
-                <Typography>Overview</Typography>
+              <MenuItem onClick={() => { handleHomeMenuClose(); onNavigate('request-demo-modal'); }} sx={{ gap: '12px' }}>
+                <FileTextIcon sx={{ fontSize: '1.2rem', color: '#26c6da' }} />
+                <Typography>New Demo Request</Typography>
               </MenuItem>
             </Menu>
 

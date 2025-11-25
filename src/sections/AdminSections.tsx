@@ -938,7 +938,7 @@ export const FormConfigurationSection = ({ onNavigate }: { onNavigate?: (section
 
   const breadcrumbs = [
     { label: 'Admin', onClick: () => onNavigate?.('admin-dashboard') },
-    { label: 'Request Options' },
+    { label: 'Request Form Options' },
   ];
 
   const handleEdit = (id: number) => {
@@ -979,10 +979,10 @@ export const FormConfigurationSection = ({ onNavigate }: { onNavigate?: (section
         <Box sx={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
             <Typography variant="h3" sx={{ fontWeight: 700, color: '#1a1a1a', marginBottom: '8px' }}>
-              Request Options
+              Request Form Options
             </Typography>
             <Typography variant="body1" sx={{ color: '#666666', fontSize: '0.9rem' }}>
-              Manage audience categories for demo requests
+              Configure request form settings and target audiences
             </Typography>
           </Box>
           <Button
@@ -1001,8 +1001,68 @@ export const FormConfigurationSection = ({ onNavigate }: { onNavigate?: (section
           </Button>
         </Box>
 
-        {/* Options Grid */}
-        <Grid container spacing={2}>
+        {/* Target Audience Section */}
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6} md={4}>
+            <Card
+              sx={{
+                borderRadius: '12px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                transition: 'all 0.3s ease',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                background: 'linear-gradient(135deg, rgba(0, 151, 167, 0.1) 0%, rgba(38, 198, 218, 0.05) 100%)',
+                border: '2px solid rgba(0, 151, 167, 0.2)',
+                '&:hover': {
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+                  transform: 'translateY(-4px)',
+                  borderColor: 'rgba(0, 151, 167, 0.4)',
+                },
+              }}
+            >
+              <CardContent sx={{ padding: '28px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+                <Box sx={{ fontSize: '2.5rem', marginBottom: '16px', color: '#0097a7' }}>🎯</Box>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: 700,
+                    color: '#1a1a1a',
+                    marginBottom: '8px',
+                  }}
+                >
+                  Target Audience
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#666666',
+                    fontSize: '0.9rem',
+                    marginBottom: '20px',
+                  }}
+                >
+                  Configure {audiences.length} audience categor{audiences.length === 1 ? 'y' : 'ies'}
+                </Typography>
+                <Button
+                  variant="contained"
+                  sx={{
+                    background: 'linear-gradient(135deg, #0097a7 0%, #00bcd4 100%)',
+                    color: '#ffffff',
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    fontSize: '0.95rem',
+                    padding: '10px 24px',
+                    borderRadius: '8px',
+                  }}
+                  onClick={handleOpenNew}
+                >
+                  Configure
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          {/* Audiences Grid */}
           {audiences.map((audience) => (
             <Grid item xs={12} sm={6} md={4} key={audience.id}>
               <Card

@@ -57,7 +57,11 @@ function App() {
   };
 
   const handleNavigate = (section: string) => {
-    setCurrentSection(section);
+    if (section === 'request-demo-modal') {
+      setShowRequestDemoModal(true);
+    } else {
+      setCurrentSection(section);
+    }
   };
 
   const renderContent = () => {
