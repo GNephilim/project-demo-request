@@ -1106,6 +1106,7 @@ export const TargetAudienceConfigSection = ({ onNavigate }: { onNavigate?: (sect
           <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '24px' }}>
             <TextField
               fullWidth
+              variant="outlined"
               label="Audience Name"
               placeholder="e.g., Enterprise, SMB"
               size="small"
@@ -1114,6 +1115,7 @@ export const TargetAudienceConfigSection = ({ onNavigate }: { onNavigate?: (sect
             />
             <TextField
               fullWidth
+              variant="outlined"
               label="Description"
               placeholder="Describe this audience"
               multiline
@@ -1315,6 +1317,7 @@ export const DatabaseTypeConfigSection = ({ onNavigate }: { onNavigate?: (sectio
           <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '24px' }}>
             <TextField
               fullWidth
+              variant="outlined"
               label="Database Name"
               placeholder="e.g., PostgreSQL, MySQL"
               size="small"
@@ -1515,6 +1518,7 @@ export const ProgrammingLanguageConfigSection = ({ onNavigate }: { onNavigate?: 
           <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '24px' }}>
             <TextField
               fullWidth
+              variant="outlined"
               label="Language Name"
               placeholder="e.g., JavaScript, Python"
               size="small"
