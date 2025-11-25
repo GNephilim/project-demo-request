@@ -1100,10 +1100,10 @@ export const TargetAudienceConfigSection = ({ onNavigate }: { onNavigate?: (sect
         </Card>
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-          <DialogTitle sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
+          <DialogTitle sx={{ fontWeight: 600, fontSize: '1.1rem', paddingBottom: '12px' }}>
             {editingId ? 'Edit Audience' : 'Add New Audience'}
           </DialogTitle>
-          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '16px' }}>
+          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '24px' }}>
             <TextField
               fullWidth
               label="Audience Name"
@@ -1309,10 +1309,10 @@ export const DatabaseTypeConfigSection = ({ onNavigate }: { onNavigate?: (sectio
         </Card>
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-          <DialogTitle sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
+          <DialogTitle sx={{ fontWeight: 600, fontSize: '1.1rem', paddingBottom: '12px' }}>
             {editingId ? 'Edit Database' : 'Add New Database'}
           </DialogTitle>
-          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '16px' }}>
+          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '24px' }}>
             <TextField
               fullWidth
               label="Database Name"
@@ -1509,10 +1509,10 @@ export const ProgrammingLanguageConfigSection = ({ onNavigate }: { onNavigate?: 
         </Card>
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-          <DialogTitle sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
+          <DialogTitle sx={{ fontWeight: 600, fontSize: '1.1rem', paddingBottom: '12px' }}>
             {editingId ? 'Edit Language' : 'Add New Language'}
           </DialogTitle>
-          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '16px' }}>
+          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '24px' }}>
             <TextField
               fullWidth
               label="Language Name"
