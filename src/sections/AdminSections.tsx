@@ -524,17 +524,21 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
     { id: 6, name: 'Lisa Anderson', email: 'lisa.anderson@company.com', userRole: 'User' },
   ];
 
-  const [departments, setDepartments] = useState([
-    { id: 1, name: 'IT', head: 'John Smith', teamMembers: [{ userId: 1, role: 'member' as const }, { userId: 3, role: 'member' as const }], description: 'Information Technology department', status: 'Active' },
-    { id: 2, name: 'Sales', head: 'Sarah Johnson', teamMembers: [{ userId: 2, role: 'member' as const }, { userId: 5, role: 'sponsor' as const, sponsorLevel: 'Silver', tiedDepartment: 'Sales' }], description: 'Sales and business development', status: 'Active' },
-    { id: 3, name: 'Operations', head: 'Mike Chen', teamMembers: [{ userId: 3, role: 'member' as const }, { userId: 6, role: 'member' as const }], description: 'Operations and logistics', status: 'Active' },
-    { id: 4, name: 'Product', head: 'Emily Davis', teamMembers: [{ userId: 4, role: 'sponsor' as const, sponsorLevel: 'Gold', tiedDepartment: 'IT' }], description: 'Product management team', status: 'Active' },
+  type TeamMember = 
+    | { userId: number; role: 'member' }
+    | { userId: number; role: 'sponsor'; sponsorLevel: string; tiedDepartment: string };
+
+  const [departments, setDepartments] = useState<Array<{ id: number; name: string; head: string; teamMembers: TeamMember[]; description: string; status: string }>([
+    { id: 1, name: 'IT', head: 'John Smith', teamMembers: [{ userId: 1, role: 'member' }, { userId: 3, role: 'member' }], description: 'Information Technology department', status: 'Active' },
+    { id: 2, name: 'Sales', head: 'Sarah Johnson', teamMembers: [{ userId: 2, role: 'member' }, { userId: 5, role: 'sponsor', sponsorLevel: 'Silver', tiedDepartment: 'Sales' }], description: 'Sales and business development', status: 'Active' },
+    { id: 3, name: 'Operations', head: 'Mike Chen', teamMembers: [{ userId: 3, role: 'member' }, { userId: 6, role: 'member' }], description: 'Operations and logistics', status: 'Active' },
+    { id: 4, name: 'Product', head: 'Emily Davis', teamMembers: [{ userId: 4, role: 'sponsor', sponsorLevel: 'Gold', tiedDepartment: 'IT' }], description: 'Product management team', status: 'Active' },
   ]);
-  const [editForm, setEditForm] = useState({ 
-    name: '', 
-    head: '', 
-    teamMembers: [] as Array<{ userId: number; role: 'member' | 'sponsor'; sponsorLevel?: string; tiedDepartment?: string }>,
-    description: '' 
+  const [editForm, setEditForm] = useState<{ name: string; head: string; teamMembers: TeamMember[]; description: string }>({
+    name: '',
+    head: '',
+    teamMembers: [],
+    description: ''
   });
 
   const breadcrumbs = [
@@ -546,7 +550,7 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
     const dept = departments.find(d => d.id === id);
     if (dept) {
       setEditingId(id);
-      setEditForm({ name: dept.name, head: dept.head, teamMembers: [...dept.teamMembers], description: dept.description });
+      setEditForm({ name: dept.name, head: dept.head, teamMembers: dept.teamMembers, description: dept.description });
       setOpenDialog(true);
     }
   };
@@ -1702,7 +1706,7 @@ export const ReportsSection = ({ onNavigate }: { onNavigate?: (section: string) 
         <Paper sx={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', overflow: 'hidden' }}>
           <Tabs 
             value={activeTab} 
-            onChange={(e, newValue) => setActiveTab(newValue)}
+            onChange={(_e, newValue) => setActiveTab(newValue)}
             sx={{
               backgroundColor: '#ffffff',
               borderBottom: '2px solid #e0e0e0',
