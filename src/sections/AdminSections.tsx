@@ -8,24 +8,24 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
   const departments = ['IT', 'Sales', 'Operations', 'Product'];
   
   const [users, setUsers] = useState([
-    { id: 1, name: 'John Smith', email: 'john.smith@company.com', department: 'IT', role: 'member' as const, status: 'Active' },
-    { id: 2, name: 'Sarah Johnson', email: 'sarah.johnson@company.com', department: 'Sales', role: 'sponsor' as const, status: 'Active' },
-    { id: 3, name: 'Mike Chen', email: 'mike.chen@company.com', department: 'Operations', role: 'member' as const, status: 'Active' },
-    { id: 4, name: 'Emily Davis', email: 'emily.davis@company.com', department: 'Product', role: 'sponsor' as const, status: 'Active' },
-    { id: 5, name: 'David Wilson', email: 'david.wilson@company.com', department: 'IT', role: 'member' as const, status: 'Active' },
-    { id: 6, name: 'Lisa Anderson', email: 'lisa.anderson@company.com', department: 'Sales', role: 'member' as const, status: 'Active' },
-    { id: 7, name: 'James Rodriguez', email: 'james.rodriguez@company.com', department: 'Operations', role: 'sponsor' as const, status: 'Active' },
-    { id: 8, name: 'Jennifer Lee', email: 'jennifer.lee@company.com', department: 'Product', role: 'member' as const, status: 'Active' },
-    { id: 9, name: 'Robert Martinez', email: 'robert.martinez@company.com', department: 'IT', role: 'sponsor' as const, status: 'Active' },
-    { id: 10, name: 'Michelle Taylor', email: 'michelle.taylor@company.com', department: 'Sales', role: 'member' as const, status: 'Inactive' },
-    { id: 11, name: 'Christopher Garcia', email: 'christopher.garcia@company.com', department: 'Operations', role: 'member' as const, status: 'Active' },
-    { id: 12, name: 'Amanda Brown', email: 'amanda.brown@company.com', department: 'Product', role: 'sponsor' as const, status: 'Active' },
+    { id: 1, name: 'John Smith', email: 'john.smith@company.com', department: 'IT', isAdmin: false, isSponsor: false, status: 'Active' },
+    { id: 2, name: 'Sarah Johnson', email: 'sarah.johnson@company.com', department: 'Sales', isAdmin: false, isSponsor: true, status: 'Active' },
+    { id: 3, name: 'Mike Chen', email: 'mike.chen@company.com', department: 'Operations', isAdmin: false, isSponsor: false, status: 'Active' },
+    { id: 4, name: 'Emily Davis', email: 'emily.davis@company.com', department: 'Product', isAdmin: true, isSponsor: false, status: 'Active' },
+    { id: 5, name: 'David Wilson', email: 'david.wilson@company.com', department: 'IT', isAdmin: false, isSponsor: false, status: 'Active' },
+    { id: 6, name: 'Lisa Anderson', email: 'lisa.anderson@company.com', department: 'Sales', isAdmin: false, isSponsor: false, status: 'Active' },
+    { id: 7, name: 'James Rodriguez', email: 'james.rodriguez@company.com', department: 'Operations', isAdmin: false, isSponsor: true, status: 'Active' },
+    { id: 8, name: 'Jennifer Lee', email: 'jennifer.lee@company.com', department: 'Product', isAdmin: false, isSponsor: false, status: 'Active' },
+    { id: 9, name: 'Robert Martinez', email: 'robert.martinez@company.com', department: 'IT', isAdmin: false, isSponsor: true, status: 'Active' },
+    { id: 10, name: 'Michelle Taylor', email: 'michelle.taylor@company.com', department: 'Sales', isAdmin: false, isSponsor: false, status: 'Inactive' },
+    { id: 11, name: 'Christopher Garcia', email: 'christopher.garcia@company.com', department: 'Operations', isAdmin: false, isSponsor: false, status: 'Active' },
+    { id: 12, name: 'Amanda Brown', email: 'amanda.brown@company.com', department: 'Product', isAdmin: true, isSponsor: false, status: 'Active' },
   ]);
   
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [editForm, setEditForm] = useState<{ name: string; email: string; department: string; role: 'member' | 'sponsor' }>({ name: '', email: '', department: '', role: 'member' });
+  const [editForm, setEditForm] = useState<{ name: string; email: string; department: string; isAdmin: boolean; isSponsor: boolean }>({ name: '', email: '', department: '', isAdmin: false, isSponsor: false });
   const [searchTerm, setSearchTerm] = useState('');
   const [bulkAction, setBulkAction] = useState<string>('');
   const [bulkActionValue, setBulkActionValue] = useState<string>('');
@@ -45,7 +45,7 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
     const user = users.find(u => u.id === id);
     if (user) {
       setEditingId(id);
-      setEditForm({ name: user.name, email: user.email, department: user.department, role: user.role });
+      setEditForm({ name: user.name, email: user.email, department: user.department, isAdmin: user.isAdmin, isSponsor: user.isSponsor });
       setOpenDialog(true);
     }
   };
@@ -59,7 +59,7 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
     if (editingId) {
       setUsers(users.map(u => 
         u.id === editingId 
-          ? { ...u, name: editForm.name, email: editForm.email, department: editForm.department, role: editForm.role }
+          ? { ...u, name: editForm.name, email: editForm.email, department: editForm.department, isAdmin: editForm.isAdmin, isSponsor: editForm.isSponsor }
           : u
       ));
     } else {
@@ -68,18 +68,19 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
         name: editForm.name,
         email: editForm.email,
         department: editForm.department,
-        role: editForm.role,
+        isAdmin: editForm.isAdmin,
+        isSponsor: editForm.isSponsor,
         status: 'Active'
       }]);
     }
     setOpenDialog(false);
     setEditingId(null);
-    setEditForm({ name: '', email: '', department: '', role: 'member' as const });
+    setEditForm({ name: '', email: '', department: '', isAdmin: false, isSponsor: false });
   };
 
   const handleOpenNew = () => {
     setEditingId(null);
-    setEditForm({ name: '', email: '', department: '', role: 'member' as const });
+    setEditForm({ name: '', email: '', department: '', isAdmin: false, isSponsor: false });
     setOpenDialog(true);
   };
 
@@ -98,15 +99,6 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
     setBulkActionValue('');
   };
 
-  const handleBulkChangeRole = (role: 'member' | 'sponsor') => {
-    setUsers(users.map(u => 
-      selectedRows.includes(u.id) ? { ...u, role } : u
-    ));
-    setSelectedRows([]);
-    setBulkAction('');
-    setBulkActionValue('');
-  };
-
   const handleBulkDelete = () => {
     setUsers(users.filter(u => !selectedRows.includes(u.id)));
     setSelectedRows([]);
@@ -117,8 +109,6 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
   const handleBulkApply = () => {
     if (bulkAction === 'department' && bulkActionValue) {
       handleBulkChangeDepartment(bulkActionValue);
-    } else if (bulkAction === 'role' && bulkActionValue) {
-      handleBulkChangeRole(bulkActionValue as 'member' | 'sponsor');
     } else if (bulkAction === 'delete') {
       handleBulkDelete();
     }
@@ -203,7 +193,6 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
                     }}
                   >
                     <MenuItem value="department">Change Department</MenuItem>
-                    <MenuItem value="role">Change Role</MenuItem>
                     <MenuItem value="delete">Delete</MenuItem>
                   </Select>
                 </FormControl>
@@ -223,24 +212,6 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
                       {departments.map(dept => (
                         <MenuItem key={dept} value={dept}>{dept}</MenuItem>
                       ))}
-                    </Select>
-                  </FormControl>
-                )}
-
-                {bulkAction === 'role' && (
-                  <FormControl size="small" sx={{ minWidth: '140px' }}>
-                    <InputLabel>Role</InputLabel>
-                    <Select
-                      value={bulkActionValue}
-                      label="Role"
-                      onChange={(e) => setBulkActionValue(e.target.value)}
-                      sx={{
-                        backgroundColor: '#ffffff',
-                        fontSize: '0.85rem',
-                      }}
-                    >
-                      <MenuItem value="member">Member</MenuItem>
-                      <MenuItem value="sponsor">Sponsor</MenuItem>
                     </Select>
                   </FormControl>
                 )}
@@ -321,7 +292,7 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px' }}>Name</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px' }}>Email</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px' }}>Department</TableCell>
-                  <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px' }}>Role</TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px' }}>Permissions</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px' }}>Status</TableCell>
                   <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px', textAlign: 'center' }}>Actions</TableCell>
                 </TableRow>
@@ -380,29 +351,44 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
                         </Select>
                       </TableCell>
                       <TableCell sx={{ paddingY: '8px' }} onClick={(e) => e.stopPropagation()}>
-                        <Select
-                          value={user.role}
-                          onChange={(e) => {
-                            setUsers(users.map(u => u.id === user.id ? { ...u, role: e.target.value as 'member' | 'sponsor' } : u));
-                          }}
-                          size="small"
-                          sx={{
-                            fontSize: '0.85rem',
-                            height: '28px',
-                            minWidth: '100px',
-                            backgroundColor: user.role === 'sponsor' ? '#fff8e1' : '#e3f2fd',
-                            color: user.role === 'sponsor' ? '#f57f17' : '#0097a7',
-                            '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: user.role === 'sponsor' ? '#f57f17' : '#0097a7',
-                            },
-                            '&:hover .MuiOutlinedInput-notchedOutline': {
-                              borderColor: user.role === 'sponsor' ? '#f57f17' : '#0097a7',
-                            },
-                          }}
-                        >
-                          <MenuItem value="member">Member</MenuItem>
-                          <MenuItem value="sponsor">Sponsor</MenuItem>
-                        </Select>
+                        <Box sx={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                          {user.isAdmin && (
+                            <Chip
+                              label="Admin"
+                              size="small"
+                              sx={{
+                                backgroundColor: '#fce4ec',
+                                color: '#c2185b',
+                                fontSize: '0.7rem',
+                                fontWeight: 600,
+                              }}
+                            />
+                          )}
+                          {user.isSponsor && (
+                            <Chip
+                              label="Sponsor"
+                              size="small"
+                              sx={{
+                                backgroundColor: '#fff8e1',
+                                color: '#f57f17',
+                                fontSize: '0.7rem',
+                                fontWeight: 600,
+                              }}
+                            />
+                          )}
+                          {!user.isAdmin && !user.isSponsor && (
+                            <Chip
+                              label="Member"
+                              size="small"
+                              sx={{
+                                backgroundColor: '#e3f2fd',
+                                color: '#0097a7',
+                                fontSize: '0.7rem',
+                                fontWeight: 600,
+                              }}
+                            />
+                          )}
+                        </Box>
                       </TableCell>
                       <TableCell sx={{ paddingY: '8px' }}>
                         <Chip
@@ -483,17 +469,24 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
                 ))}
               </Select>
             </FormControl>
-            <FormControl fullWidth size="small">
-              <InputLabel>Role</InputLabel>
-              <Select
-                value={editForm.role}
-                label="Role"
-                onChange={(e) => setEditForm({ ...editForm, role: e.target.value as 'member' | 'sponsor' })}
-              >
-                <MenuItem value="member">Member</MenuItem>
-                <MenuItem value="sponsor">Sponsor</MenuItem>
-              </Select>
-            </FormControl>
+            
+            {/* Admin and Sponsor Checkboxes */}
+            <Box sx={{ display: 'flex', gap: '16px', padding: '12px', backgroundColor: '#f5f5f5', borderRadius: '6px' }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Checkbox
+                  checked={editForm.isAdmin}
+                  onChange={(e) => setEditForm({ ...editForm, isAdmin: e.target.checked })}
+                />
+                <Typography sx={{ fontSize: '0.9rem', fontWeight: 600 }}>Admin User</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Checkbox
+                  checked={editForm.isSponsor}
+                  onChange={(e) => setEditForm({ ...editForm, isSponsor: e.target.checked })}
+                />
+                <Typography sx={{ fontSize: '0.9rem', fontWeight: 600 }}>Sponsor</Typography>
+              </Box>
+            </Box>
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
@@ -511,9 +504,7 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
   );
 };
 
-type TeamMember = 
-  | { userId: number; role: 'member' }
-  | { userId: number; role: 'sponsor'; sponsorLevel: string; tiedDepartment: string };
+type TeamMember = { userId: number; isSponsor?: boolean };
 
 type Department = { id: number; name: string; head: string; teamMembers: TeamMember[]; description: string; status: string };
 type EditFormState = { name: string; head: string; teamMembers: TeamMember[]; description: string };
@@ -533,10 +524,10 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
   ];
 
   const [departments, setDepartments] = useState<Department[]>([
-    { id: 1, name: 'IT', head: 'John Smith', teamMembers: [{ userId: 1, role: 'member' }, { userId: 3, role: 'member' }], description: 'Information Technology department', status: 'Active' },
-    { id: 2, name: 'Sales', head: 'Sarah Johnson', teamMembers: [{ userId: 2, role: 'member' }, { userId: 5, role: 'sponsor', sponsorLevel: 'Silver', tiedDepartment: 'Sales' }], description: 'Sales and business development', status: 'Active' },
-    { id: 3, name: 'Operations', head: 'Mike Chen', teamMembers: [{ userId: 3, role: 'member' }, { userId: 6, role: 'member' }], description: 'Operations and logistics', status: 'Active' },
-    { id: 4, name: 'Product', head: 'Emily Davis', teamMembers: [{ userId: 4, role: 'sponsor', sponsorLevel: 'Gold', tiedDepartment: 'IT' }], description: 'Product management team', status: 'Active' },
+    { id: 1, name: 'IT', head: 'John Smith', teamMembers: [{ userId: 1, isSponsor: false }, { userId: 3, isSponsor: false }], description: 'Information Technology department', status: 'Active' },
+    { id: 2, name: 'Sales', head: 'Sarah Johnson', teamMembers: [{ userId: 2, isSponsor: false }, { userId: 5, isSponsor: true }], description: 'Sales and business development', status: 'Active' },
+    { id: 3, name: 'Operations', head: 'Mike Chen', teamMembers: [{ userId: 3, isSponsor: false }, { userId: 6, isSponsor: false }], description: 'Operations and logistics', status: 'Active' },
+    { id: 4, name: 'Product', head: 'Emily Davis', teamMembers: [{ userId: 4, isSponsor: true }], description: 'Product management team', status: 'Active' },
   ]);
   const [editForm, setEditForm] = useState<EditFormState>({
     name: '',
@@ -592,23 +583,6 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
     setOpenDialog(false);
   };
 
-  const updateMemberRole = (userId: number, newRole: 'member' | 'sponsor') => {
-    setEditForm((prev: EditFormState) => {
-      const updated = prev.teamMembers.map((tm: TeamMember) => {
-        if (tm.userId === userId) {
-          if (newRole === 'member') {
-            return { userId, role: 'member' as const };
-          } else {
-            const sponsor = tm as any;
-            return { userId, role: 'sponsor' as const, sponsorLevel: sponsor.sponsorLevel || '', tiedDepartment: sponsor.tiedDepartment || '' };
-          }
-        }
-        return tm;
-      });
-      return { ...prev, teamMembers: updated };
-    });
-  };
-
   const removeMember = (userId: number) => {
     setEditForm((prev: EditFormState) => ({
       ...prev,
@@ -620,7 +594,7 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
     if (!editForm.teamMembers.find((tm: TeamMember) => tm.userId === userId)) {
       setEditForm((prev: EditFormState) => ({
         ...prev,
-        teamMembers: [...prev.teamMembers, { userId, role: 'member' as const }]
+        teamMembers: [...prev.teamMembers, { userId, isSponsor: false }]
       }));
     }
   };
@@ -658,7 +632,7 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
         <Grid container spacing={3}>
           {departments.map((dept: Department) => {
             const deptMembers = dept.teamMembers
-              .map((tm: TeamMember) => ({ ...availableUsers.find(u => u.id === tm.userId), memberRole: tm.role, sponsorLevel: (tm as any).sponsorLevel, tiedDepartment: (tm as any).tiedDepartment }))
+              .map((tm: TeamMember) => ({ ...availableUsers.find(u => u.id === tm.userId), isSponsor: tm.isSponsor }))
               .filter((m: any) => m.id);
             const displayMembers = deptMembers.slice(0, 3);
             const moreCount = deptMembers.length > 3 ? deptMembers.length - 3 : 0;
@@ -705,8 +679,8 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
                                 sx={{
                                   fontSize: '0.7rem',
                                   height: '20px',
-                                  backgroundColor: member.memberRole === 'sponsor' ? '#fff3e010' : '#e3f2fd',
-                                  color: member.memberRole === 'sponsor' ? '#ff9800' : '#0097a7',
+                                  backgroundColor: member.isSponsor ? '#fff3e010' : '#e3f2fd',
+                                  color: member.isSponsor ? '#ff9800' : '#0097a7',
                                   fontWeight: 500
                                 }}
                               />
@@ -864,66 +838,21 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
                         </Box>
 
                         <Box sx={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
-                          {(['member', 'sponsor'] as const).map(role => (
-                            <Button
-                              key={role}
-                              size="small"
-                              variant={member.role === role ? 'contained' : 'outlined'}
-                              onClick={() => updateMemberRole(member.userId, role)}
-                              sx={{
-                                flex: 1,
-                                fontSize: '0.75rem',
-                                padding: '4px 8px',
-                                textTransform: 'capitalize',
-                                backgroundColor: member.role === role ? '#0097a7' : 'transparent',
-                                color: member.role === role ? '#fff' : '#0097a7',
-                                borderColor: '#0097a7',
-                                '&:hover': {
-                                  backgroundColor: member.role === role ? '#0097a7' : '#0097a708'
-                                }
-                              }}
-                            >
-                              {role}
-                            </Button>
-                          ))}
-                        </Box>
-
-                        {member.role === 'sponsor' && (
-                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingTop: '10px', borderTop: '1px solid #e0e0e0' }}>
-                            <TextField
-                              fullWidth
-                              label="Sponsorship Level"
-                              placeholder="e.g., Gold, Silver, Bronze"
-                              size="small"
-                              value={member.sponsorLevel || ''}
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1 }}>
+                            <Checkbox
+                              checked={member.isSponsor || false}
                               onChange={(e) => {
                                 setEditForm(prev => ({
                                   ...prev,
                                   teamMembers: prev.teamMembers.map(tm =>
-                                    tm.userId === member.userId ? { ...tm, sponsorLevel: e.target.value } : tm
+                                    tm.userId === member.userId ? { ...tm, isSponsor: e.target.checked } : tm
                                   )
                                 }));
                               }}
-                              sx={{ '& .MuiInputBase-input': { fontSize: '0.85rem' } }}
                             />
-                            <TextField
-                              fullWidth
-                              label="Tied Department"
-                              placeholder="Which department(s) does this sponsor support?"
-                              size="small"
-                              value={member.tiedDepartment || ''}
-                              onChange={(e) => {
-                                setEditForm(prev => ({
-                                  ...prev,
-                                  teamMembers: prev.teamMembers.map(tm =>
-                                    tm.userId === member.userId ? { ...tm, tiedDepartment: e.target.value } : tm
-                                  )
-                                }));
-                              }}
-                              sx={{ '& .MuiInputBase-input': { fontSize: '0.85rem' } }}
-                            />
+                            <Typography sx={{ fontSize: '0.85rem', fontWeight: 600 }}>Mark as Sponsor</Typography>
                           </Box>
-                        )}
+                        </Box>
                       </Box>
                     );
                   })}
