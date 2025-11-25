@@ -178,7 +178,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       >
         <Tab
           label={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               All
               {stats.total > 0 && (
                 <Badge badgeContent={stats.total} sx={{
@@ -186,7 +186,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     backgroundColor: '#0097a7',
                     color: '#ffffff',
                     fontSize: '0.65rem',
-                    minWidth: '18px',
+                    minWidth: '20px',
+                    height: '20px',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   },
                 }} />
               )}
@@ -195,7 +200,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         />
         <Tab
           label={
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               Unread
               {stats.unread > 0 && (
                 <Badge badgeContent={stats.unread} sx={{
@@ -203,7 +208,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
                     backgroundColor: '#26c6da',
                     color: '#0f172a',
                     fontSize: '0.65rem',
-                    minWidth: '18px',
+                    minWidth: '20px',
+                    height: '20px',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   },
                 }} />
               )}
