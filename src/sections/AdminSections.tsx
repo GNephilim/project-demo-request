@@ -510,6 +510,13 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
   );
 };
 
+type TeamMember = 
+  | { userId: number; role: 'member' }
+  | { userId: number; role: 'sponsor'; sponsorLevel: string; tiedDepartment: string };
+
+type Department = { id: number; name: string; head: string; teamMembers: TeamMember[]; description: string; status: string };
+type EditFormState = { name: string; head: string; teamMembers: TeamMember[]; description: string };
+
 export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (section: string) => void }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -524,17 +531,13 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
     { id: 6, name: 'Lisa Anderson', email: 'lisa.anderson@company.com', userRole: 'User' },
   ];
 
-  type TeamMember = 
-    | { userId: number; role: 'member' }
-    | { userId: number; role: 'sponsor'; sponsorLevel: string; tiedDepartment: string };
-
-  const [departments, setDepartments] = useState<Array<{ id: number; name: string; head: string; teamMembers: TeamMember[]; description: string; status: string }>([
+  const [departments, setDepartments] = useState<Department[]>([
     { id: 1, name: 'IT', head: 'John Smith', teamMembers: [{ userId: 1, role: 'member' }, { userId: 3, role: 'member' }], description: 'Information Technology department', status: 'Active' },
     { id: 2, name: 'Sales', head: 'Sarah Johnson', teamMembers: [{ userId: 2, role: 'member' }, { userId: 5, role: 'sponsor', sponsorLevel: 'Silver', tiedDepartment: 'Sales' }], description: 'Sales and business development', status: 'Active' },
     { id: 3, name: 'Operations', head: 'Mike Chen', teamMembers: [{ userId: 3, role: 'member' }, { userId: 6, role: 'member' }], description: 'Operations and logistics', status: 'Active' },
     { id: 4, name: 'Product', head: 'Emily Davis', teamMembers: [{ userId: 4, role: 'sponsor', sponsorLevel: 'Gold', tiedDepartment: 'IT' }], description: 'Product management team', status: 'Active' },
   ]);
-  const [editForm, setEditForm] = useState<{ name: string; head: string; teamMembers: TeamMember[]; description: string }>({
+  const [editForm, setEditForm] = useState<EditFormState>({
     name: '',
     head: '',
     teamMembers: [],
@@ -547,7 +550,7 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
   ];
 
   const handleEdit = (id: number) => {
-    const dept = departments.find(d => d.id === id);
+    const dept = departments.find((d: Department) => d.id === id);
     if (dept) {
       setEditingId(id);
       setEditForm({ name: dept.name, head: dept.head, teamMembers: dept.teamMembers, description: dept.description });
@@ -556,7 +559,7 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
   };
 
   const handleDelete = (id: number) => {
-    setDepartments(departments.filter(d => d.id !== id));
+    setDepartments(departments.filter((d: Department) => d.id !== id));
   };
 
   const handleOpenNew = () => {
@@ -568,7 +571,7 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
   const handleSave = () => {
     if (editingId !== null) {
       // Edit existing
-      setDepartments(departments.map(d =>
+      setDepartments(departments.map((d: Department) =>
         d.id === editingId
           ? { ...d, name: editForm.name, head: editForm.head, teamMembers: editForm.teamMembers, description: editForm.description }
           : d
@@ -589,26 +592,34 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
   };
 
   const updateMemberRole = (userId: number, newRole: 'member' | 'sponsor') => {
-    setEditForm(prev => ({
-      ...prev,
-      teamMembers: prev.teamMembers.map(tm =>
-        tm.userId === userId ? { ...tm, role: newRole } : tm
-      )
-    }));
+    setEditForm((prev: EditFormState) => {
+      const updated = prev.teamMembers.map((tm: TeamMember) => {
+        if (tm.userId === userId) {
+          if (newRole === 'member') {
+            return { userId, role: 'member' as const };
+          } else {
+            const sponsor = tm as any;
+            return { userId, role: 'sponsor' as const, sponsorLevel: sponsor.sponsorLevel || '', tiedDepartment: sponsor.tiedDepartment || '' };
+          }
+        }
+        return tm;
+      });
+      return { ...prev, teamMembers: updated };
+    });
   };
 
   const removeMember = (userId: number) => {
-    setEditForm(prev => ({
+    setEditForm((prev: EditFormState) => ({
       ...prev,
-      teamMembers: prev.teamMembers.filter(tm => tm.userId !== userId)
+      teamMembers: prev.teamMembers.filter((tm: TeamMember) => tm.userId !== userId)
     }));
   };
 
   const addMember = (userId: number) => {
-    if (!editForm.teamMembers.find(tm => tm.userId === userId)) {
-      setEditForm(prev => ({
+    if (!editForm.teamMembers.find((tm: TeamMember) => tm.userId === userId)) {
+      setEditForm((prev: EditFormState) => ({
         ...prev,
-        teamMembers: [...prev.teamMembers, { userId, role: 'member' }]
+        teamMembers: [...prev.teamMembers, { userId, role: 'member' as const }]
       }));
     }
   };
@@ -644,10 +655,10 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
         </Box>
 
         <Grid container spacing={3}>
-          {departments.map(dept => {
+          {departments.map((dept: Department) => {
             const deptMembers = dept.teamMembers
-              .map(tm => ({ ...availableUsers.find(u => u.id === tm.userId), memberRole: tm.role, sponsorLevel: tm.sponsorLevel, tiedDepartment: tm.tiedDepartment }))
-              .filter(m => m.id);
+              .map((tm: TeamMember) => ({ ...availableUsers.find(u => u.id === tm.userId), memberRole: tm.role, sponsorLevel: (tm as any).sponsorLevel, tiedDepartment: (tm as any).tiedDepartment }))
+              .filter((m: any) => m.id);
             const displayMembers = deptMembers.slice(0, 3);
             const moreCount = deptMembers.length > 3 ? deptMembers.length - 3 : 0;
 
@@ -685,7 +696,7 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
                         <Box sx={{ paddingTop: '8px', borderTop: '1px solid #f0f0f0' }}>
                           <Typography sx={{ fontSize: '0.8rem', color: '#999', marginBottom: '6px' }}>Team:</Typography>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
-                            {displayMembers.map(member => (
+                            {displayMembers.map((member: any) => (
                               <Chip
                                 key={member.id}
                                 label={member.name}
