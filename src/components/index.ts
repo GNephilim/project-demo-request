@@ -13,3 +13,4 @@ export { TopNavigation } from './TopNavigation';
 export { AdminHeader } from './AdminHeader';
 export { BreadcrumbNav } from './Breadcrumbs';
 export { DataTable } from './DataTable';
+export { NotificationCenter } from './NotificationCenter';

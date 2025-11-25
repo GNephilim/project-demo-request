@@ -20,6 +20,7 @@ import {
   SiteSettingsSection,
   DatabaseSettingsSection,
   ReportsSection,
+  NotificationSettingsSection,
 } from './sections/AdminSections';
 import { SystemInformationSection } from './sections/SystemInformationSection';
 
@@ -108,6 +109,12 @@ function App() {
       );
     }
 
+    if (currentSection === 'notification-settings') {
+      return (
+        <NotificationSettingsSection onNavigate={handleNavigate} />
+      );
+    }
+
     // Dashboard/Overview
     if (currentSection === 'dashboard' || currentSection === 'home' || currentSection === 'overview') {
       return (
@@ -178,7 +185,6 @@ function App() {
           adminName={adminName}
           onAdminLoginClick={() => setShowLoginModal(true)}
           onAdminLogout={handleAdminLogout}
-          onRequestDemoClick={() => setShowRequestDemoModal(true)}
           onNavigate={handleNavigate}
           currentSection={currentSection}
         />

@@ -2,6 +2,7 @@ import { Box, Container, Typography, Card, CardContent, Grid, Button, TextField,
 import { useState } from 'react';
 import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon, FileDownload as FileDownloadIcon, Print as PrintIcon } from '@mui/icons-material';
 import { BreadcrumbNav } from '../components/Breadcrumbs';
+import { NotificationSettingsSection } from './NotificationSettingsSection';
 
 export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: string) => void }) => {
   const departments = ['IT', 'Sales', 'Operations', 'Product'];
@@ -1972,3 +1973,5 @@ export const ReportsSection = ({ onNavigate }: { onNavigate?: (section: string) 
     </Box>
   );
 };
+
+export { NotificationSettingsSection };
