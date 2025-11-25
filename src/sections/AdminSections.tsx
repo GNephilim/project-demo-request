@@ -506,8 +506,8 @@ export const UserManagementSection = ({ onNavigate }: { onNavigate?: (section: s
 
 type TeamMember = { userId: number; isSponsor?: boolean };
 
-type Department = { id: number; name: string; head: string; teamMembers: TeamMember[]; description: string; status: string };
-type EditFormState = { name: string; head: string; teamMembers: TeamMember[]; description: string };
+type Department = { id: number; name: string; head: string; contact: string; teamMembers: TeamMember[]; description: string; status: string };
+type EditFormState = { name: string; head: string; contact: string; teamMembers: TeamMember[]; description: string };
 
 export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (section: string) => void }) => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -524,14 +524,15 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
   ];
 
   const [departments, setDepartments] = useState<Department[]>([
-    { id: 1, name: 'IT', head: 'John Smith', teamMembers: [{ userId: 1, isSponsor: false }, { userId: 3, isSponsor: false }], description: 'Information Technology department', status: 'Active' },
-    { id: 2, name: 'Sales', head: 'Sarah Johnson', teamMembers: [{ userId: 2, isSponsor: false }, { userId: 5, isSponsor: true }], description: 'Sales and business development', status: 'Active' },
-    { id: 3, name: 'Operations', head: 'Mike Chen', teamMembers: [{ userId: 3, isSponsor: false }, { userId: 6, isSponsor: false }], description: 'Operations and logistics', status: 'Active' },
-    { id: 4, name: 'Product', head: 'Emily Davis', teamMembers: [{ userId: 4, isSponsor: true }], description: 'Product management team', status: 'Active' },
+    { id: 1, name: 'IT', head: 'John Smith', contact: 'john.smith@company.com', teamMembers: [{ userId: 1, isSponsor: false }, { userId: 3, isSponsor: false }], description: 'Information Technology department', status: 'Active' },
+    { id: 2, name: 'Sales', head: 'Sarah Johnson', contact: 'sarah.johnson@company.com', teamMembers: [{ userId: 2, isSponsor: false }, { userId: 5, isSponsor: true }], description: 'Sales and business development', status: 'Active' },
+    { id: 3, name: 'Operations', head: 'Mike Chen', contact: 'mike.chen@company.com', teamMembers: [{ userId: 3, isSponsor: false }, { userId: 6, isSponsor: false }], description: 'Operations and logistics', status: 'Active' },
+    { id: 4, name: 'Product', head: 'Emily Davis', contact: 'emily.davis@company.com', teamMembers: [{ userId: 4, isSponsor: true }], description: 'Product management team', status: 'Active' },
   ]);
   const [editForm, setEditForm] = useState<EditFormState>({
     name: '',
     head: '',
+    contact: '',
     teamMembers: [],
     description: ''
   });
@@ -545,7 +546,7 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
     const dept = departments.find((d: Department) => d.id === id);
     if (dept) {
       setEditingId(id);
-      setEditForm({ name: dept.name, head: dept.head, teamMembers: dept.teamMembers, description: dept.description });
+      setEditForm({ name: dept.name, head: dept.head, contact: dept.contact, teamMembers: dept.teamMembers, description: dept.description });
       setOpenDialog(true);
     }
   };
@@ -556,7 +557,7 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
 
   const handleOpenNew = () => {
     setEditingId(null);
-    setEditForm({ name: '', head: '', teamMembers: [], description: '' });
+    setEditForm({ name: '', head: '', contact: '', teamMembers: [], description: '' });
     setOpenDialog(true);
   };
 
@@ -565,7 +566,7 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
       // Edit existing
       setDepartments(departments.map((d: Department) =>
         d.id === editingId
-          ? { ...d, name: editForm.name, head: editForm.head, teamMembers: editForm.teamMembers, description: editForm.description }
+          ? { ...d, name: editForm.name, head: editForm.head, contact: editForm.contact, teamMembers: editForm.teamMembers, description: editForm.description }
           : d
       ));
     } else {
@@ -575,6 +576,7 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
         id: newId,
         name: editForm.name,
         head: editForm.head,
+        contact: editForm.contact,
         teamMembers: editForm.teamMembers,
         description: editForm.description,
         status: 'Active'
@@ -634,8 +636,10 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
             const deptMembers = dept.teamMembers
               .map((tm: TeamMember) => ({ ...availableUsers.find(u => u.id === tm.userId), isSponsor: tm.isSponsor }))
               .filter((m: any) => m.id);
-            const displayMembers = deptMembers.slice(0, 3);
-            const moreCount = deptMembers.length > 3 ? deptMembers.length - 3 : 0;
+            const sponsors = deptMembers.filter(m => m.isSponsor);
+            const regularMembers = deptMembers.filter(m => !m.isSponsor);
+            const displayMembers = regularMembers.slice(0, 2);
+            const moreCount = regularMembers.length > 2 ? regularMembers.length - 2 : 0;
 
             return (
               <Grid item xs={12} sm={6} md={4} key={dept.id}>
@@ -663,13 +667,49 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
                         <Typography sx={{ fontSize: '0.85rem', color: '#666' }}>Head:</Typography>
                         <Typography sx={{ fontSize: '0.9rem', fontWeight: 600 }}>{dept.head}</Typography>
                       </Box>
+                      {dept.contact && (
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <Typography sx={{ fontSize: '0.85rem', color: '#666' }}>Contact:</Typography>
+                          <Typography sx={{ fontSize: '0.85rem', fontWeight: 500, color: '#0097a7', cursor: 'pointer' }}>
+                            {dept.contact}
+                          </Typography>
+                        </Box>
+                      )}
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Typography sx={{ fontSize: '0.85rem', color: '#666' }}>Members:</Typography>
                         <Chip label={`${deptMembers.length} people`} size="small" variant="outlined" sx={{ fontSize: '0.75rem', height: '22px' }} />
                       </Box>
-                      {deptMembers.length > 0 && (
+                      {sponsors.length > 0 && (
                         <Box sx={{ paddingTop: '8px', borderTop: '1px solid #f0f0f0' }}>
-                          <Typography sx={{ fontSize: '0.8rem', color: '#999', marginBottom: '6px' }}>Team:</Typography>
+                          <Typography sx={{ fontSize: '0.8rem', color: '#999', marginBottom: '6px', fontWeight: 600 }}>Sponsors:</Typography>
+                          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
+                            {sponsors.slice(0, 2).map((member: any) => (
+                              <Chip
+                                key={member.id}
+                                label={member.name}
+                                size="small"
+                                sx={{
+                                  fontSize: '0.7rem',
+                                  height: '20px',
+                                  backgroundColor: '#fff3e0',
+                                  color: '#ff9800',
+                                  fontWeight: 600
+                                }}
+                              />
+                            ))}
+                            {sponsors.length > 2 && (
+                              <Chip
+                                label={`+${sponsors.length - 2} sponsor${sponsors.length - 2 > 1 ? 's' : ''}`}
+                                size="small"
+                                sx={{ fontSize: '0.65rem', height: '20px', backgroundColor: '#fff3e0', color: '#ff9800', fontWeight: 600 }}
+                              />
+                            )}
+                          </Box>
+                        </Box>
+                      )}
+                      {regularMembers.length > 0 && (
+                        <Box sx={{ paddingTop: '8px' }}>
+                          <Typography sx={{ fontSize: '0.8rem', color: '#999', marginBottom: '6px' }}>Team Members:</Typography>
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
                             {displayMembers.map((member: any) => (
                               <Chip
@@ -679,15 +719,15 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
                                 sx={{
                                   fontSize: '0.7rem',
                                   height: '20px',
-                                  backgroundColor: member.isSponsor ? '#fff3e010' : '#e3f2fd',
-                                  color: member.isSponsor ? '#ff9800' : '#0097a7',
+                                  backgroundColor: '#e3f2fd',
+                                  color: '#0097a7',
                                   fontWeight: 500
                                 }}
                               />
                             ))}
                             {moreCount > 0 && (
                               <Chip
-                                label={`+${moreCount}`}
+                                label={`+${moreCount} more`}
                                 size="small"
                                 sx={{ fontSize: '0.7rem', height: '20px', backgroundColor: '#f0f0f0', color: '#666' }}
                               />
@@ -764,6 +804,15 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
               size="small"
               value={editForm.head}
               onChange={(e) => setEditForm({ ...editForm, head: e.target.value })}
+            />
+            <TextField
+              fullWidth
+              label="Contact Email"
+              placeholder="e.g., dept@company.com"
+              type="email"
+              size="small"
+              value={editForm.contact}
+              onChange={(e) => setEditForm({ ...editForm, contact: e.target.value })}
             />
             <TextField
               fullWidth

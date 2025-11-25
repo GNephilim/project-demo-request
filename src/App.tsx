@@ -23,6 +23,7 @@ import {
   NotificationSettingsSection,
 } from './sections/AdminSections';
 import { SystemInformationSection } from './sections/SystemInformationSection';
+import { ViewDepartmentsSection } from './sections/ViewDepartmentsSection';
 
 function App() {
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
@@ -76,6 +77,12 @@ function App() {
     if (currentSection === 'departments-manage') {
       return (
         <DepartmentManagementSection onNavigate={handleNavigate} />
+      );
+    }
+
+    if (currentSection === 'view-departments') {
+      return (
+        <ViewDepartmentsSection />
       );
     }
 
