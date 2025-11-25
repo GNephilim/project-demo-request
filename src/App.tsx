@@ -17,6 +17,9 @@ import {
   UserManagementSection,
   DepartmentManagementSection,
   FormConfigurationSection,
+  TargetAudienceConfigSection,
+  DatabaseTypeConfigSection,
+  ProgrammingLanguageConfigSection,
   SiteSettingsSection,
   DatabaseSettingsSection,
   ReportsSection,
@@ -93,6 +96,24 @@ function App() {
     if (currentSection === 'forms-configuration') {
       return (
         <FormConfigurationSection onNavigate={handleNavigate} />
+      );
+    }
+
+    if (currentSection === 'target-audience-config') {
+      return (
+        <TargetAudienceConfigSection onNavigate={handleNavigate} />
+      );
+    }
+
+    if (currentSection === 'database-type-config') {
+      return (
+        <DatabaseTypeConfigSection onNavigate={handleNavigate} />
+      );
+    }
+
+    if (currentSection === 'programming-language-config') {
+      return (
+        <ProgrammingLanguageConfigSection onNavigate={handleNavigate} />
       );
     }
 

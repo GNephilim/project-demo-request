@@ -927,20 +927,22 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
   );
 };
 
-export const FormConfigurationSection = ({ onNavigate }: { onNavigate?: (section: string) => void }) => {
-  const [openDialog, setOpenDialog] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
+export const TargetAudienceConfigSection = ({ onNavigate }: { onNavigate?: (section: string) => void }) => {
   const [audiences, setAudiences] = useState([
     { id: 1, name: 'Enterprise', description: 'Large organizations with 1000+ employees' },
     { id: 2, name: 'Mid-Market', description: 'Companies with 100-1000 employees' },
     { id: 3, name: 'Small Business', description: 'Startups and small teams under 100 people' },
     { id: 4, name: 'Individual', description: 'Freelancers and independent professionals' },
   ]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState({ name: '', description: '' });
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const breadcrumbs = [
     { label: 'Admin', onClick: () => onNavigate?.('admin-dashboard') },
-    { label: 'Request Form Options' },
+    { label: 'Request Form Options', onClick: () => onNavigate?.('forms-configuration') },
+    { label: 'Target Audience' },
   ];
 
   const handleEdit = (id: number) => {
@@ -952,25 +954,32 @@ export const FormConfigurationSection = ({ onNavigate }: { onNavigate?: (section
     }
   };
 
+  const handleDelete = (id: number) => {
+    setAudiences(audiences.filter((a) => a.id !== id));
+    setSelectedRows(selectedRows.filter(rowId => rowId !== id));
+  };
+
   const handleSave = () => {
     if (editingId !== null) {
       setAudiences(audiences.map((a) => (a.id === editingId ? { ...a, ...editForm } : a)));
     } else {
-      setAudiences([...audiences, { id: Math.max(...audiences.map((a) => a.id)) + 1, ...editForm }]);
+      setAudiences([...audiences, { id: Math.max(...audiences.map((a) => a.id), 0) + 1, ...editForm }]);
     }
     setOpenDialog(false);
     setEditingId(null);
     setEditForm({ name: '', description: '' });
   };
 
-  const handleDelete = (id: number) => {
-    setAudiences(audiences.filter((a) => a.id !== id));
-  };
-
   const handleOpenNew = () => {
     setEditingId(null);
     setEditForm({ name: '', description: '' });
     setOpenDialog(true);
+  };
+
+  const toggleRowSelection = (id: number) => {
+    setSelectedRows(prev =>
+      prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]
+    );
   };
 
   return (
@@ -981,10 +990,10 @@ export const FormConfigurationSection = ({ onNavigate }: { onNavigate?: (section
         <Box sx={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Box>
             <Typography variant="h3" sx={{ fontWeight: 700, color: '#1a1a1a', marginBottom: '8px' }}>
-              Request Form Options
+              Target Audience Configuration
             </Typography>
             <Typography variant="body1" sx={{ color: '#666666', fontSize: '0.9rem' }}>
-              Configure request form settings and target audiences
+              Manage audience categories for demo requests
             </Typography>
           </Box>
           <Button
@@ -999,162 +1008,105 @@ export const FormConfigurationSection = ({ onNavigate }: { onNavigate?: (section
             }}
             onClick={handleOpenNew}
           >
-            Add Option
+            Add Audience
           </Button>
         </Box>
 
-        {/* Target Audience Section */}
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={4}>
-            <Card
-              sx={{
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                transition: 'all 0.3s ease',
-                height: '100%',
-                display: 'flex',
-                flexDirection: 'column',
-                background: 'linear-gradient(135deg, rgba(0, 151, 167, 0.1) 0%, rgba(38, 198, 218, 0.05) 100%)',
-                border: '2px solid rgba(0, 151, 167, 0.2)',
-                '&:hover': {
-                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-                  transform: 'translateY(-4px)',
-                  borderColor: 'rgba(0, 151, 167, 0.4)',
-                },
-              }}
-            >
-              <CardContent sx={{ padding: '28px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-                <Box sx={{ fontSize: '2.5rem', marginBottom: '16px', color: '#0097a7' }}>🎯</Box>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: 700,
-                    color: '#1a1a1a',
-                    marginBottom: '8px',
-                  }}
-                >
-                  Target Audience
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: '#666666',
-                    fontSize: '0.9rem',
-                    marginBottom: '20px',
-                  }}
-                >
-                  Configure {audiences.length} audience categor{audiences.length === 1 ? 'y' : 'ies'}
-                </Typography>
-                <Button
-                  variant="contained"
-                  sx={{
-                    background: 'linear-gradient(135deg, #0097a7 0%, #00bcd4 100%)',
-                    color: '#ffffff',
-                    fontWeight: 600,
-                    textTransform: 'none',
-                    fontSize: '0.95rem',
-                    padding: '10px 24px',
-                    borderRadius: '8px',
-                  }}
-                  onClick={handleOpenNew}
-                >
-                  Configure
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          {/* Audiences Grid */}
-          {audiences.map((audience) => (
-            <Grid item xs={12} sm={6} md={4} key={audience.id}>
-              <Card
-                sx={{
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-                  transition: 'all 0.3s ease',
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  '&:hover': {
-                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
-                    transform: 'translateY(-4px)',
-                  },
-                }}
-              >
-                <CardContent sx={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      fontWeight: 700,
-                      color: '#1a1a1a',
-                      marginBottom: '8px',
-                      fontSize: '1rem',
-                    }}
-                  >
-                    {audience.name}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: '#666666',
-                      fontSize: '0.85rem',
-                      lineHeight: '1.5',
-                      marginBottom: '16px',
-                      flex: 1,
-                    }}
-                  >
-                    {audience.description}
-                  </Typography>
-
-                  {/* Action Buttons */}
-                  <Box sx={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      startIcon={<EditIcon />}
-                      sx={{
-                        color: '#0097a7',
-                        borderColor: '#0097a7',
-                        fontSize: '0.75rem',
-                        textTransform: 'none',
-                        '&:hover': {
-                          backgroundColor: '#00bcd420',
-                        },
+        {/* Table */}
+        <Card sx={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', overflow: 'hidden' }}>
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#f5f5f5', borderBottom: '2px solid #e0e0e0' }}>
+                  <TableCell sx={{ width: '40px', paddingY: '12px', paddingX: '16px' }}>
+                    <Checkbox
+                      checked={selectedRows.length === audiences.length && audiences.length > 0}
+                      indeterminate={selectedRows.length > 0 && selectedRows.length < audiences.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedRows(audiences.map(a => a.id));
+                        } else {
+                          setSelectedRows([]);
+                        }
                       }}
-                      onClick={() => handleEdit(audience.id)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      startIcon={<DeleteIcon />}
+                    />
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px' }}>Name</TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px' }}>Description</TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px', textAlign: 'center' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {audiences.length > 0 ? (
+                  audiences.map((audience) => (
+                    <TableRow
+                      key={audience.id}
+                      onClick={() => toggleRowSelection(audience.id)}
                       sx={{
-                        color: '#f44336',
-                        borderColor: '#f44336',
-                        fontSize: '0.75rem',
-                        textTransform: 'none',
+                        backgroundColor: selectedRows.includes(audience.id) ? '#e0f7fa20' : '#ffffff',
+                        cursor: 'pointer',
                         '&:hover': {
-                          backgroundColor: '#f4433620',
+                          backgroundColor: '#e0f7fa40',
                         },
+                        borderBottom: '1px solid #eeeeee',
                       }}
-                      onClick={() => handleDelete(audience.id)}
                     >
-                      Delete
-                    </Button>
-                  </Box>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+                      <TableCell sx={{ paddingY: '12px', paddingX: '16px' }}>
+                        <Checkbox
+                          checked={selectedRows.includes(audience.id)}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ fontSize: '0.9rem', color: '#1a1a1a', fontWeight: 500 }}>
+                        {audience.name}
+                      </TableCell>
+                      <TableCell sx={{ fontSize: '0.9rem', color: '#666' }}>
+                        {audience.description}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: 'center', paddingY: '8px' }}>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(audience.id);
+                          }}
+                          sx={{ color: '#0097a7' }}
+                        >
+                          <EditIcon sx={{ fontSize: '1rem' }} />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(audience.id);
+                          }}
+                          sx={{ color: '#f44336' }}
+                        >
+                          <DeleteIcon sx={{ fontSize: '1rem' }} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} sx={{ textAlign: 'center', paddingY: '32px', color: '#999' }}>
+                      No audiences configured
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Card>
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-          <DialogTitle>{editingId !== null ? 'Edit Request Option' : 'Add New Request Option'}</DialogTitle>
+          <DialogTitle sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
+            {editingId ? 'Edit Audience' : 'Add New Audience'}
+          </DialogTitle>
           <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '16px' }}>
             <TextField
               fullWidth
-              label="Option Name"
+              label="Audience Name"
               placeholder="e.g., Enterprise, SMB"
               size="small"
               value={editForm.name}
@@ -1163,9 +1115,9 @@ export const FormConfigurationSection = ({ onNavigate }: { onNavigate?: (section
             <TextField
               fullWidth
               label="Description"
-              placeholder="Describe this option"
+              placeholder="Describe this audience"
               multiline
-              rows={4}
+              rows={3}
               size="small"
               value={editForm.description}
               onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
@@ -1173,8 +1125,12 @@ export const FormConfigurationSection = ({ onNavigate }: { onNavigate?: (section
           </DialogContent>
           <DialogActions>
             <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-            <Button variant="contained" sx={{ background: 'linear-gradient(135deg, #0097a7 0%, #00bcd4 100%)' }} onClick={handleSave}>
-              {editingId !== null ? 'Update Option' : 'Add Option'}
+            <Button
+              variant="contained"
+              sx={{ background: 'linear-gradient(135deg, #0097a7 0%, #00bcd4 100%)' }}
+              onClick={handleSave}
+            >
+              {editingId ? 'Update' : 'Add'}
             </Button>
           </DialogActions>
         </Dialog>
@@ -1182,6 +1138,538 @@ export const FormConfigurationSection = ({ onNavigate }: { onNavigate?: (section
     </Box>
   );
 };
+
+export const DatabaseTypeConfigSection = ({ onNavigate }: { onNavigate?: (section: string) => void }) => {
+  const [databases, setDatabases] = useState([
+    { id: 1, name: 'PostgreSQL' },
+    { id: 2, name: 'MySQL' },
+    { id: 3, name: 'MongoDB' },
+    { id: 4, name: 'SQL Server' },
+    { id: 5, name: 'Oracle' },
+  ]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState({ name: '' });
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+
+  const breadcrumbs = [
+    { label: 'Admin', onClick: () => onNavigate?.('admin-dashboard') },
+    { label: 'Request Form Options', onClick: () => onNavigate?.('forms-configuration') },
+    { label: 'Database Types' },
+  ];
+
+  const handleEdit = (id: number) => {
+    const item = databases.find((d) => d.id === id);
+    if (item) {
+      setEditingId(id);
+      setEditForm({ name: item.name });
+      setOpenDialog(true);
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    setDatabases(databases.filter((d) => d.id !== id));
+    setSelectedRows(selectedRows.filter(rowId => rowId !== id));
+  };
+
+  const handleSave = () => {
+    if (editingId !== null) {
+      setDatabases(databases.map((d) => (d.id === editingId ? { ...d, ...editForm } : d)));
+    } else {
+      setDatabases([...databases, { id: Math.max(...databases.map((d) => d.id), 0) + 1, ...editForm }]);
+    }
+    setOpenDialog(false);
+    setEditingId(null);
+    setEditForm({ name: '' });
+  };
+
+  const handleOpenNew = () => {
+    setEditingId(null);
+    setEditForm({ name: '' });
+    setOpenDialog(true);
+  };
+
+  const toggleRowSelection = (id: number) => {
+    setSelectedRows(prev =>
+      prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]
+    );
+  };
+
+  return (
+    <Box sx={{ padding: '32px 24px', backgroundColor: '#f5f7fa', minHeight: 'calc(100vh - 64px)' }}>
+      <Container maxWidth="xl">
+        <BreadcrumbNav items={breadcrumbs} />
+
+        <Box sx={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            <Typography variant="h3" sx={{ fontWeight: 700, color: '#1a1a1a', marginBottom: '8px' }}>
+              Database Type Configuration
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#666666', fontSize: '0.9rem' }}>
+              Manage database types available in demo requests
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            sx={{
+              background: 'linear-gradient(135deg, #0097a7 0%, #00bcd4 100%)',
+              color: '#ffffff',
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '0.9rem',
+            }}
+            onClick={handleOpenNew}
+          >
+            Add Database
+          </Button>
+        </Box>
+
+        {/* Table */}
+        <Card sx={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', overflow: 'hidden' }}>
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#f5f5f5', borderBottom: '2px solid #e0e0e0' }}>
+                  <TableCell sx={{ width: '40px', paddingY: '12px', paddingX: '16px' }}>
+                    <Checkbox
+                      checked={selectedRows.length === databases.length && databases.length > 0}
+                      indeterminate={selectedRows.length > 0 && selectedRows.length < databases.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedRows(databases.map(d => d.id));
+                        } else {
+                          setSelectedRows([]);
+                        }
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px' }}>Database Name</TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px', textAlign: 'center' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {databases.length > 0 ? (
+                  databases.map((database) => (
+                    <TableRow
+                      key={database.id}
+                      onClick={() => toggleRowSelection(database.id)}
+                      sx={{
+                        backgroundColor: selectedRows.includes(database.id) ? '#e0f7fa20' : '#ffffff',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: '#e0f7fa40',
+                        },
+                        borderBottom: '1px solid #eeeeee',
+                      }}
+                    >
+                      <TableCell sx={{ paddingY: '12px', paddingX: '16px' }}>
+                        <Checkbox
+                          checked={selectedRows.includes(database.id)}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ fontSize: '0.9rem', color: '#1a1a1a', fontWeight: 500 }}>
+                        {database.name}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: 'center', paddingY: '8px' }}>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(database.id);
+                          }}
+                          sx={{ color: '#0097a7' }}
+                        >
+                          <EditIcon sx={{ fontSize: '1rem' }} />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(database.id);
+                          }}
+                          sx={{ color: '#f44336' }}
+                        >
+                          <DeleteIcon sx={{ fontSize: '1rem' }} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} sx={{ textAlign: 'center', paddingY: '32px', color: '#999' }}>
+                      No databases configured
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Card>
+
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+          <DialogTitle sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
+            {editingId ? 'Edit Database' : 'Add New Database'}
+          </DialogTitle>
+          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '16px' }}>
+            <TextField
+              fullWidth
+              label="Database Name"
+              placeholder="e.g., PostgreSQL, MySQL"
+              size="small"
+              value={editForm.name}
+              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+            <Button
+              variant="contained"
+              sx={{ background: 'linear-gradient(135deg, #0097a7 0%, #00bcd4 100%)' }}
+              onClick={handleSave}
+            >
+              {editingId ? 'Update' : 'Add'}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
+    </Box>
+  );
+};
+
+export const ProgrammingLanguageConfigSection = ({ onNavigate }: { onNavigate?: (section: string) => void }) => {
+  const [languages, setLanguages] = useState([
+    { id: 1, name: 'JavaScript' },
+    { id: 2, name: 'Python' },
+    { id: 3, name: 'Java' },
+    { id: 4, name: 'C#' },
+    { id: 5, name: 'Go' },
+    { id: 6, name: 'TypeScript' },
+  ]);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState({ name: '' });
+  const [selectedRows, setSelectedRows] = useState<number[]>([]);
+
+  const breadcrumbs = [
+    { label: 'Admin', onClick: () => onNavigate?.('admin-dashboard') },
+    { label: 'Request Form Options', onClick: () => onNavigate?.('forms-configuration') },
+    { label: 'Programming Languages' },
+  ];
+
+  const handleEdit = (id: number) => {
+    const item = languages.find((l) => l.id === id);
+    if (item) {
+      setEditingId(id);
+      setEditForm({ name: item.name });
+      setOpenDialog(true);
+    }
+  };
+
+  const handleDelete = (id: number) => {
+    setLanguages(languages.filter((l) => l.id !== id));
+    setSelectedRows(selectedRows.filter(rowId => rowId !== id));
+  };
+
+  const handleSave = () => {
+    if (editingId !== null) {
+      setLanguages(languages.map((l) => (l.id === editingId ? { ...l, ...editForm } : l)));
+    } else {
+      setLanguages([...languages, { id: Math.max(...languages.map((l) => l.id), 0) + 1, ...editForm }]);
+    }
+    setOpenDialog(false);
+    setEditingId(null);
+    setEditForm({ name: '' });
+  };
+
+  const handleOpenNew = () => {
+    setEditingId(null);
+    setEditForm({ name: '' });
+    setOpenDialog(true);
+  };
+
+  const toggleRowSelection = (id: number) => {
+    setSelectedRows(prev =>
+      prev.includes(id) ? prev.filter(rowId => rowId !== id) : [...prev, id]
+    );
+  };
+
+  return (
+    <Box sx={{ padding: '32px 24px', backgroundColor: '#f5f7fa', minHeight: 'calc(100vh - 64px)' }}>
+      <Container maxWidth="xl">
+        <BreadcrumbNav items={breadcrumbs} />
+
+        <Box sx={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            <Typography variant="h3" sx={{ fontWeight: 700, color: '#1a1a1a', marginBottom: '8px' }}>
+              Programming Language Configuration
+            </Typography>
+            <Typography variant="body1" sx={{ color: '#666666', fontSize: '0.9rem' }}>
+              Manage programming languages available in demo requests
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            sx={{
+              background: 'linear-gradient(135deg, #0097a7 0%, #00bcd4 100%)',
+              color: '#ffffff',
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '0.9rem',
+            }}
+            onClick={handleOpenNew}
+          >
+            Add Language
+          </Button>
+        </Box>
+
+        {/* Table */}
+        <Card sx={{ borderRadius: '12px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)', overflow: 'hidden' }}>
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: '#f5f5f5', borderBottom: '2px solid #e0e0e0' }}>
+                  <TableCell sx={{ width: '40px', paddingY: '12px', paddingX: '16px' }}>
+                    <Checkbox
+                      checked={selectedRows.length === languages.length && languages.length > 0}
+                      indeterminate={selectedRows.length > 0 && selectedRows.length < languages.length}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSelectedRows(languages.map(l => l.id));
+                        } else {
+                          setSelectedRows([]);
+                        }
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px' }}>Language Name</TableCell>
+                  <TableCell sx={{ fontWeight: 600, fontSize: '0.85rem', color: '#1a1a1a', paddingY: '12px', textAlign: 'center' }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {languages.length > 0 ? (
+                  languages.map((language) => (
+                    <TableRow
+                      key={language.id}
+                      onClick={() => toggleRowSelection(language.id)}
+                      sx={{
+                        backgroundColor: selectedRows.includes(language.id) ? '#e0f7fa20' : '#ffffff',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          backgroundColor: '#e0f7fa40',
+                        },
+                        borderBottom: '1px solid #eeeeee',
+                      }}
+                    >
+                      <TableCell sx={{ paddingY: '12px', paddingX: '16px' }}>
+                        <Checkbox
+                          checked={selectedRows.includes(language.id)}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </TableCell>
+                      <TableCell sx={{ fontSize: '0.9rem', color: '#1a1a1a', fontWeight: 500 }}>
+                        {language.name}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: 'center', paddingY: '8px' }}>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(language.id);
+                          }}
+                          sx={{ color: '#0097a7' }}
+                        >
+                          <EditIcon sx={{ fontSize: '1rem' }} />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(language.id);
+                          }}
+                          sx={{ color: '#f44336' }}
+                        >
+                          <DeleteIcon sx={{ fontSize: '1rem' }} />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={3} sx={{ textAlign: 'center', paddingY: '32px', color: '#999' }}>
+                      No languages configured
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Card>
+
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+          <DialogTitle sx={{ fontWeight: 600, fontSize: '1.1rem' }}>
+            {editingId ? 'Edit Language' : 'Add New Language'}
+          </DialogTitle>
+          <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: '16px', paddingTop: '16px' }}>
+            <TextField
+              fullWidth
+              label="Language Name"
+              placeholder="e.g., JavaScript, Python"
+              size="small"
+              value={editForm.name}
+              onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+            <Button
+              variant="contained"
+              sx={{ background: 'linear-gradient(135deg, #0097a7 0%, #00bcd4 100%)' }}
+              onClick={handleSave}
+            >
+              {editingId ? 'Update' : 'Add'}
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Container>
+    </Box>
+  );
+};
+
+export const FormConfigurationSection = ({ onNavigate }: { onNavigate?: (section: string) => void }) => {
+  const breadcrumbs = [
+    { label: 'Admin', onClick: () => onNavigate?.('admin-dashboard') },
+    { label: 'Request Form Options' },
+  ];
+
+  const configCards = [
+    {
+      id: 'target-audience',
+      icon: '🎯',
+      title: 'Target Audience',
+      description: 'Manage audience categories',
+      color: '#ff9800',
+      onClick: () => onNavigate?.('target-audience-config'),
+    },
+    {
+      id: 'database-types',
+      icon: '🗄️',
+      title: 'Database Types',
+      description: 'Manage database options',
+      color: '#2196f3',
+      onClick: () => onNavigate?.('database-type-config'),
+    },
+    {
+      id: 'languages',
+      icon: '</>',
+      title: 'Programming Languages',
+      description: 'Manage language options',
+      color: '#4caf50',
+      onClick: () => onNavigate?.('programming-language-config'),
+    },
+  ];
+
+  return (
+    <Box sx={{ padding: '32px 24px', backgroundColor: '#f5f7fa', minHeight: 'calc(100vh - 64px)' }}>
+      <Container maxWidth="xl">
+        <BreadcrumbNav items={breadcrumbs} />
+
+        <Box sx={{ marginBottom: '32px' }}>
+          <Typography variant="h3" sx={{ fontWeight: 700, color: '#1a1a1a', marginBottom: '8px' }}>
+            Request Form Options
+          </Typography>
+          <Typography variant="body1" sx={{ color: '#666666', fontSize: '0.9rem' }}>
+            Configure request form settings
+          </Typography>
+        </Box>
+
+        {/* Configuration Cards */}
+        <Grid container spacing={3}>
+          {configCards.map((card) => (
+            <Grid item xs={12} sm={6} md={4} key={card.id}>
+              <Card
+                onClick={card.onClick}
+                sx={{
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                  transition: 'all 0.3s ease',
+                  height: '100%',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  background: `linear-gradient(135deg, rgba(${hexToRgb(card.color)}, 0.1) 0%, rgba(${hexToRgb(card.color)}, 0.05) 100%)`,
+                  border: `2px solid rgba(${hexToRgb(card.color)}, 0.2)`,
+                  '&:hover': {
+                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+                    transform: 'translateY(-4px)',
+                    borderColor: `rgba(${hexToRgb(card.color)}, 0.4)`,
+                  },
+                }}
+              >
+                <CardContent sx={{ padding: '28px', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+                  <Box sx={{ fontSize: '2.5rem', marginBottom: '16px' }}>{card.icon}</Box>
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      color: '#1a1a1a',
+                      marginBottom: '8px',
+                    }}
+                  >
+                    {card.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: '#666666',
+                      fontSize: '0.9rem',
+                      marginBottom: '20px',
+                    }}
+                  >
+                    {card.description}
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      background: `linear-gradient(135deg, ${card.color} 0%, ${adjustColor(card.color, 20)} 100%)`,
+                      color: '#ffffff',
+                      fontWeight: 600,
+                      textTransform: 'none',
+                      fontSize: '0.95rem',
+                      padding: '10px 24px',
+                      borderRadius: '8px',
+                    }}
+                  >
+                    Configure
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    </Box>
+  );
+};
+
+function hexToRgb(hex: string): string {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '0, 0, 0';
+}
+
+function adjustColor(color: string, percent: number): string {
+  const num = parseInt(color.replace('#', ''), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = (num >> 16) + amt;
+  const G = (num >> 8 & 0x00FF) + amt;
+  const B = (num & 0x0000FF) + amt;
+  return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+    (B < 255 ? B < 1 ? 0 : B : 255))
+    .toString(16).slice(1);
+}
 
 export const SiteSettingsSection = ({ onNavigate }: { onNavigate?: (section: string) => void }) => {
   const [generalSettings, setGeneralSettings] = useState({
