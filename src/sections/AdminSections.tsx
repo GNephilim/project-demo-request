@@ -1110,6 +1110,7 @@ export const TargetAudienceConfigSection = ({ onNavigate }: { onNavigate?: (sect
               label="Audience Name"
               placeholder="e.g., Enterprise, SMB"
               size="small"
+              InputLabelProps={{ shrink: true }}
               value={editForm.name}
               onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
             />
@@ -1121,6 +1122,7 @@ export const TargetAudienceConfigSection = ({ onNavigate }: { onNavigate?: (sect
               multiline
               rows={3}
               size="small"
+              InputLabelProps={{ shrink: true }}
               value={editForm.description}
               onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
             />
@@ -1321,6 +1323,7 @@ export const DatabaseTypeConfigSection = ({ onNavigate }: { onNavigate?: (sectio
               label="Database Name"
               placeholder="e.g., PostgreSQL, MySQL"
               size="small"
+              InputLabelProps={{ shrink: true }}
               value={editForm.name}
               onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
             />
@@ -1522,6 +1525,7 @@ export const ProgrammingLanguageConfigSection = ({ onNavigate }: { onNavigate?: 
               label="Language Name"
               placeholder="e.g., JavaScript, Python"
               size="small"
+              InputLabelProps={{ shrink: true }}
               value={editForm.name}
               onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
             />
