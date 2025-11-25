@@ -679,9 +679,9 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
                         <Typography sx={{ fontSize: '0.85rem', color: '#666' }}>Members:</Typography>
                         <Chip label={`${deptMembers.length} people`} size="small" variant="outlined" sx={{ fontSize: '0.75rem', height: '22px' }} />
                       </Box>
-                      {sponsors.length > 0 && (
-                        <Box sx={{ paddingTop: '8px', borderTop: '1px solid #f0f0f0' }}>
-                          <Typography sx={{ fontSize: '0.8rem', color: '#999', marginBottom: '6px', fontWeight: 600 }}>Sponsors:</Typography>
+                      <Box sx={{ paddingTop: '8px', borderTop: '1px solid #f0f0f0' }}>
+                        <Typography sx={{ fontSize: '0.8rem', color: '#999', marginBottom: '6px', fontWeight: 600 }}>Sponsors:</Typography>
+                        {sponsors.length > 0 ? (
                           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '4px', alignItems: 'center' }}>
                             {sponsors.slice(0, 2).map((member: any) => (
                               <Chip
@@ -705,8 +705,10 @@ export const DepartmentManagementSection = ({ onNavigate }: { onNavigate?: (sect
                               />
                             )}
                           </Box>
-                        </Box>
-                      )}
+                        ) : (
+                          <Typography sx={{ fontSize: '0.75rem', color: '#999', fontStyle: 'italic' }}>N/A</Typography>
+                        )}
+                      </Box>
                       {regularMembers.length > 0 && (
                         <Box sx={{ paddingTop: '8px' }}>
                           <Typography sx={{ fontSize: '0.8rem', color: '#999', marginBottom: '6px' }}>Team Members:</Typography>
